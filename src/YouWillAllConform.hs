@@ -9,11 +9,15 @@ type Cap = Char
 type Cmd = String
 
 type Pos = Int
+type Range = (Pos, Pos)
 
 --
 
 cap1 :: [Cap]
 cap1 = "FFBBBFBBBFFBF"
+
+ranges1 :: [(Pos, Pos)]
+ranges1 = [(3, 5), (7, 9), (12, 12)]
 
 cap2 :: [Cap]
 cap2 = "FFBBBFBBBFFFF"
@@ -21,16 +25,33 @@ cap2 = "FFBBBFBBBFFFF"
 --
 
 pleaseConform :: [Cap] -> [Cmd]
-pleaseConform = map mkCmd . gonyogonyo
+pleaseConform = makeCommands . takeEvery2nd . gonyogonyo
 
-mkCmd :: (Pos, Pos) -> Cmd
-mkCmd (i, j) = showPos i ++ "から"
-            ++ showPos j ++ "の人は帽子の向きを変えてください"
+makeCommands :: [Range] -> [Cmd]
+makeCommands = map mkCmd
 
+mkCmd :: Range -> Cmd
+mkCmd (i, j)
+  | i == j   = showPos i ++ cmdStr
+  | i /= j   = showPos i ++ "から"
+            ++ showPos j ++ cmdStr
+
+cmdStr :: Cmd
+cmdStr = "の人は帽子の向きを変えてください"
+
+showPos :: Pos -> String
 showPos pos = show pos ++ "番目"
 
-gonyogonyo :: [Cap] -> [(Pos, Pos)]
+takeEvery2nd :: [a] -> [a]
+takeEvery2nd [] = []
+takeEvery2nd (x:[]) = []
+takeEvery2nd (x:(y:zs)) = y : takeEvery2nd zs
+
+gonyogonyo :: [Cap] -> [(Range)]
 gonyogonyo = undefined
+
+
+--
 
 sample :: [Int]
 sample = [1,1,2,3,5,8,13]
@@ -38,5 +59,4 @@ sample = [1,1,2,3,5,8,13]
 twoplus :: Int -> Int
 twoplus n = n + 2
 
-hoge = map twoplus
 
